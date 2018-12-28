@@ -10,9 +10,9 @@ import javax.annotation.Nullable
 /**
  * Created by muso on 27/12/2018.
  */
-@Entity(foreignKeys = [(ForeignKey(entity = School::class, parentColumns = arrayOf("students", "number"), childColumns = arrayOf("id", "name"), onDelete = ForeignKey.CASCADE))])
+@Entity(foreignKeys = [(ForeignKey(entity = School::class, parentColumns = arrayOf("students", "number"), childColumns = arrayOf("id", "name"), onDelete = ForeignKey.SET_DEFAULT, onUpdate = ForeignKey.RESTRICT))])
 data class User(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey val id: Int,
     val name: String,
     val lastName: String?
 )

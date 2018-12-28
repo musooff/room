@@ -2,7 +2,6 @@ package com.ballboycorp.blabs.roomextension;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-import androidx.room.PrimaryKey;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -12,12 +11,17 @@ import javax.annotation.processing.*;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Types;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+/**
+ * Created by musooff on 28/12/2018.
+ */
 
 @AutoService(Processor.class)
 public class TableUtilsProcessor extends AbstractProcessor {
@@ -33,6 +37,7 @@ public class TableUtilsProcessor extends AbstractProcessor {
     private PrimaryKeyProcessor primaryKeyProcessor = new PrimaryKeyProcessor();
 
     private Filer filer;
+    private Types typeUtils;
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         for (Element element : roundEnvironment.getElementsAnnotatedWith(Entity.class)){
@@ -61,6 +66,7 @@ public class TableUtilsProcessor extends AbstractProcessor {
     public synchronized void init(ProcessingEnvironment processingEnvironment) {
         super.init(processingEnvironment);
         this.filer = processingEnvironment.getFiler();
+        this.typeUtils = processingEnvironment.getTypeUtils();
     }
 
     private String getPackage(String s){
@@ -72,14 +78,12 @@ public class TableUtilsProcessor extends AbstractProcessor {
         StringBuilder createQuery = new StringBuilder()
                 .append("CREATE TABLE IF NOT EXISTS ");
 
+
         String className = entity.getSimpleName().toString();
-        String tableName = entity.getAnnotation(Entity.class).tableName();
-        if (tableName.equals("")){
-            tableName = className;
-        }
-        tableName = "`" + tableName + "`";
+        String tableName = entityProcessor.getTableName(entity);
 
         List<String> primaryKeys = entityProcessor.getPrimaryKeys(entity);
+        ForeignKey[] foreignKeys  = entityProcessor.getForeignKeys(entity);
 
         createQuery.append(tableName);
 
@@ -101,24 +105,36 @@ public class TableUtilsProcessor extends AbstractProcessor {
                     primaryKeys.add(columnInfoProcessor.getColumnName(field));
                 }
             }
-            createQuery.append(",");
+            createQuery.append(", ");
         }
 
         if (!hasAutoIncrement){
-            createQuery.append(" PRIMARY KEY (");
+            createQuery.append("PRIMARY KEY(");
             for (String columnName : primaryKeys) {
                 createQuery.append(columnName);
-                createQuery.append(",");
+                createQuery.append(", ");
             }
-            createQuery.setLength(Math.max(createQuery.length() - 1, 0));
-            createQuery.append("))");
+            createQuery.setLength(Math.max(createQuery.length() - 2, 0));
+            createQuery.append(")");
         }
         else {
-            createQuery.setLength(Math.max(createQuery.length() - 1, 0));
+            createQuery.setLength(Math.max(createQuery.length() - 2, 0));
+        }
+
+
+        if (foreignKeys.length != 0){
+            createQuery.append(", ");
+            for (ForeignKey foreignKey: foreignKeys){
+                createQuery.append(foreignKeyProcessor.getForeignKeyQuery(typeUtils, foreignKey));
+                createQuery.append(", ");
+            }
+            createQuery.setLength(Math.max(createQuery.length() - 2, 0));
+            createQuery.append(")");
+        }
+        else {
             createQuery.append(")");
         }
 
-        ForeignKey[] foreignKeys  = entityProcessor.getForeignKeys(entity);
         TypeSpec.Builder builder =  TypeSpec.classBuilder(className + TABLE_UTILS_SUFFIX)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
 

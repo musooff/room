@@ -7,7 +7,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.ElementFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,4 +33,12 @@ class EntityProcessor {
     }
 
 
+    String getTableName(Element entity) {
+        String className = entity.getSimpleName().toString();
+        String tableName = entity.getAnnotation(Entity.class).tableName();
+        if (tableName.equals("")){
+            tableName = className;
+        }
+        return "`" + tableName + "`";
+    }
 }
