@@ -6,10 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.ballboycorp.blabs.roomextension.room.dao.UserDao
-import com.ballboycorp.blabs.roomextension.room.model.School
-import com.ballboycorp.blabs.roomextension.room.model.Student
-import com.ballboycorp.blabs.roomextension.room.model.User
+import com.ballboycorp.blabs.roomextension.room.dao.SchoolDao
+import com.ballboycorp.blabs.roomextension.room.model.*
 
 
 /**
@@ -17,34 +15,45 @@ import com.ballboycorp.blabs.roomextension.room.model.User
  */
 @Database(
     entities = [
-        User::class,
-        Student::class,
-        School::class],
-    version = 2,
+        School::class,
+        User::class
+    ],
+    version = 3,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase(){
 
-    abstract fun userDao(): UserDao
+    abstract fun schoolDao(): SchoolDao
 
     companion object {
 
         @Volatile
-        private var INSTANCE : AppDatabase? = null
+        private var INSTANCE: AppDatabase? = null
 
         fun getInstance(context: Context) =
-                INSTANCE ?: synchronized(this){
-                    INSTANCE
-                            ?: Room.databaseBuilder(context, AppDatabase::class.java, "appdatabase.db")
-                        .addMigrations(MIGRATION_1_2)
-                        .build()
-                        .also {
-                            INSTANCE = it
-                        }
-                }
+            INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Room.databaseBuilder(context, AppDatabase::class.java, "appdatabase.db")
+                    .addMigrations(
+                        MIGRATION_1_2,
+                        MIGRATION_2_3
+                    )
+                    .allowMainThreadQueries()
+                    .build()
+                    .also {
+                        INSTANCE = it
+                    }
+            }
 
-        private val MIGRATION_1_2 = object : Migration(1, 2){
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(StudentSqlUtils().createTable)
+            }
+        }
+
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(StudentSqlUtils().dropTable)
+                database.execSQL(UserSqlUtils().createTable)
             }
         }
     }

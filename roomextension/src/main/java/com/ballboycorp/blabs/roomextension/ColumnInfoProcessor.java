@@ -1,5 +1,6 @@
 package com.ballboycorp.blabs.roomextension;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 
 import javax.lang.model.element.Element;
@@ -31,16 +32,17 @@ class ColumnInfoProcessor {
     }
 
     private String getSqlType(Element column){
-        switch (column.asType().getKind()){
-            case INT:
-            case LONG:
+        switch (column.asType().toString()){
+            case "int":
+            case "java.lang.Integer":
+            case "long":
                 return " INTEGER";
-            case DECLARED:
+            case "java.lang.String":
                 return " TEXT";
-            case DOUBLE:
-            case FLOAT:
+            case "double":
+            case "float":
                 return " REAL";
-            case BOOLEAN:
+            case "boolean":
                 return " INTEGER";
             default:
                 return " UNKNOWN";
@@ -49,6 +51,9 @@ class ColumnInfoProcessor {
 
     private String getNullable(Element column){
         if (column.getAnnotation(org.jetbrains.annotations.Nullable.class) == null){
+            return " NOT NULL";
+        }
+        else if (column.getAnnotation(NonNull.class) != null){
             return " NOT NULL";
         }
         return "";
