@@ -1,8 +1,8 @@
-package com.ballboycorp.blabs.roomextension
+package com.ballboycorp.blabs.roomextensionexample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.ballboycorp.blabs.roomextension.room.AppDatabase
+import com.ballboycorp.blabs.roomextensionexample.room.AppDatabase
 
 class MainActivity : AppCompatActivity() {
 

@@ -1,5 +1,5 @@
 
-package com.ballboycorp.blabs.roomextension.room.model
+package com.ballboycorp.blabs.roomextensionexample.room.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

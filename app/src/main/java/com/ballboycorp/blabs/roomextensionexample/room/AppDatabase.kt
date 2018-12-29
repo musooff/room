@@ -1,4 +1,4 @@
-package com.ballboycorp.blabs.roomextension.room
+package com.ballboycorp.blabs.roomextensionexample.room
 
 import android.content.Context
 import androidx.room.Database
@@ -6,8 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.ballboycorp.blabs.roomextension.room.dao.SchoolDao
-import com.ballboycorp.blabs.roomextension.room.model.*
+import com.ballboycorp.blabs.roomextensionexample.room.dao.SchoolDao
+import com.ballboycorp.blabs.roomextensionexample.room.model.*
 
 
 /**

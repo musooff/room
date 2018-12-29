@@ -1,4 +1,4 @@
-package com.ballboycorp.blabs.roomextension.room.model
+package com.ballboycorp.blabs.roomextensionexample.room.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

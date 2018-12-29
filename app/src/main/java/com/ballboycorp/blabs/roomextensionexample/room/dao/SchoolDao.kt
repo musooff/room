@@ -1,8 +1,8 @@
-package com.ballboycorp.blabs.roomextension.room.dao
+package com.ballboycorp.blabs.roomextensionexample.room.dao
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.ballboycorp.blabs.roomextension.room.model.School
+import com.ballboycorp.blabs.roomextensionexample.room.model.School
 
 
 /**

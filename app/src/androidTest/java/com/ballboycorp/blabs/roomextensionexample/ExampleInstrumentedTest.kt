@@ -1,4 +1,4 @@
-package com.ballboycorp.blabs.roomextension
+package com.ballboycorp.blabs.roomextensionexample
 
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
