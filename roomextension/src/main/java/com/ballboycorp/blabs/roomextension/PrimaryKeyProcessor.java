@@ -1,4 +1,4 @@
-package com.ballboycorp.blabs.roomextensionexample;
+package com.ballboycorp.blabs.roomextension;
 
 import androidx.room.PrimaryKey;
 
